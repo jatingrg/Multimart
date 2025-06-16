@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import {
+  Form,
+  Button,
+  Col,
+  Row
+} from 'react-bootstrap';
 
 function Shipping() {
-  // Initial form state
   const [formData, setFormData] = useState({
     name: '',
     phoneNumber: '',
@@ -19,80 +20,60 @@ function Shipping() {
     checked: false,
   });
 
-  // Validation error state
-  const [formErrors, setFormErrors] = useState({
-    name: '',
-    phoneNumber: '',
-    email: '',
-    landmark: '',
-    address2: '',
-    city: '',
-    state: '',
-    zip: '',
-    checked: '',
-  });
+  const [formErrors, setFormErrors] = useState({});
+  const navigate = useNavigate();
 
-  const [isFormValid, setIsFormValid] = useState(false);
-
-  // Handle form input changes
+  // Handle input changes
   const handleChange = (e) => {
-    const { name, value, checked, type } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
     });
   };
 
-  // Validate form fields
+  // Form validation
   const validateForm = () => {
-    let errors = {};
+    const errors = {};
     let valid = true;
 
-    // Name validation
-    if (!formData.name) {
+    if (!formData.name.trim()) {
       errors.name = 'Name is required';
       valid = false;
     }
 
-    // Phone number validation
-    if (!formData.phoneNumber || formData.phoneNumber.length < 10) {
+    if (!formData.phoneNumber.trim() || formData.phoneNumber.length < 10) {
       errors.phoneNumber = 'Phone number must be at least 10 digits';
       valid = false;
     }
 
-    // Email validation
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
+    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) {
       errors.email = 'Please enter a valid email address';
       valid = false;
     }
 
-    // Zip code validation
-    if (!formData.zip || formData.zip.length < 5) {
-      errors.zip = 'Zip code must be at least 5 digits';
-      valid = false;
-    }
-
-    // Landmark validation (optional but can be required if needed)
-    if (!formData.landmark) {
+    if (!formData.landmark.trim()) {
       errors.landmark = 'Landmark is required';
       valid = false;
     }
 
-    // Address2 validation (optional but can be required if needed)
-    if (!formData.address2) {
+    if (!formData.address2.trim()) {
       errors.address2 = 'Address 2 is required';
       valid = false;
     }
 
-    // City validation
-    if (!formData.city) {
+    if (!formData.city.trim()) {
       errors.city = 'City is required';
       valid = false;
     }
 
-    // State validation
-    if (!formData.state) {
+    if (!formData.state.trim()) {
       errors.state = 'State is required';
+      valid = false;
+    }
+
+    if (!formData.zip.trim() || formData.zip.length < 5) {
+      errors.zip = 'Zip code must be at least 5 digits';
       valid = false;
     }
 
@@ -102,28 +83,25 @@ function Shipping() {
     }
 
     setFormErrors(errors);
-    setIsFormValid(valid);
-
     return valid;
   };
-const naviagte = useNavigate();
-  // Handle form submission
+
+  // Submit form
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (validateForm()) {
-      console.log('Form is valid, submitting...');
-
-   naviagte('/orderplaced');
       alert('Form submitted successfully!');
+      console.log('Form Data:', formData);
+      navigate('/orderplaced');
     } else {
-      alert('Please fill out all required fields.');
+      alert('Please fill out all required fields correctly.');
     }
   };
 
   return (
     <Form onSubmit={handleSubmit}>
-      {/* Name & Phone Number */}
+
       <Row className="mb-3">
         <Form.Group as={Col} controlId="formGridName">
           <Form.Label>Name</Form.Label>
@@ -133,7 +111,7 @@ const naviagte = useNavigate();
             name="name"
             value={formData.name}
             onChange={handleChange}
-            isInvalid={formErrors.name}
+            isInvalid={!!formErrors.name}
           />
           <Form.Control.Feedback type="invalid">
             {formErrors.name}
@@ -148,7 +126,7 @@ const naviagte = useNavigate();
             name="phoneNumber"
             value={formData.phoneNumber}
             onChange={handleChange}
-            isInvalid={formErrors.phoneNumber}
+            isInvalid={!!formErrors.phoneNumber}
           />
           <Form.Control.Feedback type="invalid">
             {formErrors.phoneNumber}
@@ -156,7 +134,6 @@ const naviagte = useNavigate();
         </Form.Group>
       </Row>
 
-      {/* Email */}
       <Form.Group className="mb-3" controlId="formGridEmail">
         <Form.Label>Email</Form.Label>
         <Form.Control
@@ -165,14 +142,13 @@ const naviagte = useNavigate();
           name="email"
           value={formData.email}
           onChange={handleChange}
-          isInvalid={formErrors.email}
+          isInvalid={!!formErrors.email}
         />
         <Form.Control.Feedback type="invalid">
           {formErrors.email}
         </Form.Control.Feedback>
       </Form.Group>
 
-      {/* Landmark */}
       <Form.Group className="mb-3" controlId="formGridLandmark">
         <Form.Label>Landmark</Form.Label>
         <Form.Control
@@ -181,14 +157,13 @@ const naviagte = useNavigate();
           name="landmark"
           value={formData.landmark}
           onChange={handleChange}
-          isInvalid={formErrors.landmark}
+          isInvalid={!!formErrors.landmark}
         />
         <Form.Control.Feedback type="invalid">
           {formErrors.landmark}
         </Form.Control.Feedback>
       </Form.Group>
 
-      {/* Address 2 */}
       <Form.Group className="mb-3" controlId="formGridAddress2">
         <Form.Label>Address 2</Form.Label>
         <Form.Control
@@ -197,14 +172,13 @@ const naviagte = useNavigate();
           name="address2"
           value={formData.address2}
           onChange={handleChange}
-          isInvalid={formErrors.address2}
+          isInvalid={!!formErrors.address2}
         />
         <Form.Control.Feedback type="invalid">
           {formErrors.address2}
         </Form.Control.Feedback>
       </Form.Group>
 
-      {/* City, State, Zip */}
       <Row className="mb-3">
         <Form.Group as={Col} controlId="formGridCity">
           <Form.Label>City</Form.Label>
@@ -214,7 +188,7 @@ const naviagte = useNavigate();
             name="city"
             value={formData.city}
             onChange={handleChange}
-            isInvalid={formErrors.city}
+            isInvalid={!!formErrors.city}
           />
           <Form.Control.Feedback type="invalid">
             {formErrors.city}
@@ -227,11 +201,12 @@ const naviagte = useNavigate();
             name="state"
             value={formData.state}
             onChange={handleChange}
-            isInvalid={formErrors.state}
+            isInvalid={!!formErrors.state}
           >
             <option value="">Choose...</option>
-            <option value="state1">State 1</option>
-            <option value="state2">State 2</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Delhi">Delhi</option>
           </Form.Select>
           <Form.Control.Feedback type="invalid">
             {formErrors.state}
@@ -246,7 +221,7 @@ const naviagte = useNavigate();
             name="zip"
             value={formData.zip}
             onChange={handleChange}
-            isInvalid={formErrors.zip}
+            isInvalid={!!formErrors.zip}
           />
           <Form.Control.Feedback type="invalid">
             {formErrors.zip}
@@ -254,29 +229,24 @@ const naviagte = useNavigate();
         </Form.Group>
       </Row>
 
-      {/* Checkbox */}
       <Form.Group className="mb-3" controlId="formGridCheckbox">
         <Form.Check
           type="checkbox"
-          label="Check me out"
+          label="I agree to the terms & conditions"
           name="checked"
           checked={formData.checked}
           onChange={handleChange}
-          isInvalid={formErrors.checked}
+          isInvalid={!!formErrors.checked}
         />
         <Form.Control.Feedback type="invalid">
           {formErrors.checked}
         </Form.Control.Feedback>
       </Form.Group>
 
-<Button
-        variant="primary"
-        type="submit"
-      >
+      <Button variant="primary" type="submit">
         Submit
       </Button>
 
-     
     </Form>
   );
 }
